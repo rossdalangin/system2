@@ -26,7 +26,9 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 			return;
 		}
 
-		if ( isset( $_GET['page'] ) && 'an-content-list' === $_GET['page'] ) {
+		$page = isset( $_GET['page'] ) ? $_GET['page'] : '';
+
+		if ( 'an-content-list' === $page ) {
 			global $wpdb;
 			$table_name = $wpdb->prefix . 'an_content';
 			$action = isset( $_GET['action'] ) ? $_GET['action'] : '';
@@ -87,6 +89,30 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 					do_action( 'agency_nexus_content_status_updated', $wpdb->insert_id, $data['status'] );
 				}
 				wp_redirect( admin_url( 'admin.php?page=an-content-list&msg=' . $msg ) );
+				exit;
+			}
+		}
+
+		if ( 'an-batch-automation' === $page ) {
+			if ( isset( $_POST['an_run_batch'] ) && check_admin_referer( 'an_batch_nonce' ) ) {
+				global $wpdb;
+				$project_id = intval( $_POST['project_id'] );
+				$count = isset( $_POST['batch_count'] ) ? intval( $_POST['batch_count'] ) : 0;
+				$titles = isset( $_POST['batch_titles'] ) ? explode( "\n", $_POST['batch_titles'] ) : [];
+
+				foreach ( $titles as $t ) {
+					$t = trim( $t );
+					if ( empty( $t ) ) continue;
+					$wpdb->insert( $wpdb->prefix . 'an_content', [
+						'project_id' => $project_id,
+						'title'      => $t,
+						'content'    => 'Batch generated draft content.',
+						'status'     => 'draft',
+						'platform'   => 'wordpress',
+						'created_at' => current_time( 'mysql' )
+					] );
+				}
+				wp_redirect( admin_url( 'admin.php?page=an-content-list&msg=added' ) );
 				exit;
 			}
 		}
@@ -313,27 +339,6 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 	public function render_batch_automation() {
 		global $wpdb;
 		$projects = $wpdb->get_results( "SELECT id, title FROM {$wpdb->prefix}an_projects" );
-
-		if ( isset( $_POST['an_run_batch'] ) && check_admin_referer( 'an_batch_nonce' ) ) {
-			$project_id = intval( $_POST['project_id'] );
-			$count = intval( $_POST['batch_count'] );
-			$titles = explode( "\n", $_POST['batch_titles'] );
-
-			foreach ( $titles as $t ) {
-				$t = trim($t);
-				if ( empty($t) ) continue;
-				$wpdb->insert( $wpdb->prefix . 'an_content', [
-					'project_id' => $project_id,
-					'title'      => $t,
-					'content'    => 'Batch generated draft content.',
-					'status'     => 'draft',
-					'platform'   => 'wordpress',
-					'created_at' => current_time('mysql')
-				] );
-			}
-			wp_redirect( admin_url( 'admin.php?page=an-content-list&msg=added' ) );
-			exit;
-		}
 
 		?>
 		<div class="agency-nexus-wrap">
