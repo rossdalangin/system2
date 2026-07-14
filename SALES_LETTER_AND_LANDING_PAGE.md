@@ -20,17 +20,17 @@ You know the feeling. You have 14 tabs open. One for Asana, one for Slack, one f
 ### ✅ The Solution: Agency Nexus
 Imagine a single command center. A place where the transition from a lead to a completed project is a automated, professional, and profitable journey.
 
-*   **A lead comes in** from your site, instantly scored by potential value.
-*   **You build a scope in 60 seconds** using interactive templates.
+*   **A lead comes in** from your site, instantly qualified and scored (0-100) by our AI Lead Intelligence.
+*   **AI Copilot drafts a proposal** in seconds from your interactive scope, writing a highly detailed and persuasive offer automatically.
 *   **The client signs off** and pays their deposit in their own branded portal.
 *   **Tasks are assigned**, dependencies are mapped, and every minute of labor is tracked against your ROI.
-*   **Automations trigger** your workflows, send daily briefings, and apply late fees.
+*   **AI-powered assistants** suggest time blocks, help write and polish content drafts, auto-generate SEO posts from keyword gaps, and draft polished message replies.
 
 **This isn't just a plugin. This is your new HQ.**
 
 ---
 
-### 🛠 The 10 Modules of Massive Growth:
+### 🛠 The 11 Modules of Massive Growth:
 
 1.  **MoneyFlow ROI Intelligence:** Real-time visibility into project profitability. Stop guessing—know exactly how much you're making after labor and expenses.
 2.  **SmartOnboard Builder:** Standardize your SEO, Design, or Ads packages. No more custom proposals for every lead. Choose a scale, add addons, and hit "Send."
@@ -42,6 +42,7 @@ Imagine a single command center. A place where the transition from a lead to a c
 8.  **Lead Intelligence:** Capturing UTM data and heatmaps. Know exactly which marketing campaigns are actually driving your highest-ROI projects.
 9.  **TimeBlock Pro:** Built-in Focus Mode and productivity timers. Help your team (and yourself) enter the Flow State and stay there.
 10. **FreebieFactory:** Manage your agency's intellectual property. Turn your internal SOPs into a marketplace asset or a discovery questionnaire.
+11. **AI Copilot Engine:** The game-changer for solo freelancers and studios alike. Connect leading AI models like OpenAI (ChatGPT), Google Gemini, and Anthropic Claude (or use our built-in offline Local Copilot) to automatically score leads, analyze social media sentiment, write content drafts from SEO keyword gaps, draft proposals, and assist with client messaging.
 
 ---
 

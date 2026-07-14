@@ -81,9 +81,9 @@ Hi {{first_name}},
 
 Clients don't just pay for results; they pay for the *experience* of working with you.
 
-With Agency Nexus, your clients get a branded portal, side-by-side revision comparisons, and a secure messaging hub.
+With Agency Nexus, your clients get a branded portal, side-by-side revision comparisons, a secure messaging hub, and a built-in AI Copilot to automatically draft and polish messages and deliverables.
 
-It makes a solo freelancer look like a high-end studio, and a small agency look like a Fortune 500 company.
+It makes a solo freelancer look like a fully automated, high-margin Solo Agency, and a small studio look like a Fortune 500 powerhouse.
 
 Standardization is the key to scale.
 
@@ -99,9 +99,9 @@ Hi {{first_name}},
 
 Most agencies waste days building custom proposals.
 
-With the **SmartOnboard** builder, you select your service, toggle your addons, and hit "Send."
+With the **SmartOnboard** builder, you select your service, toggle your addons, and let the AI Copilot dynamically draft a comprehensive, persuasive proposal in seconds.
 
-Watch this 2-minute video on how we move a lead to a signed contract in under 300 seconds: [Link to Video]
+Watch this 2-minute video on how we move a lead to an AI-drafted, signed contract in under 300 seconds: [Link to Video]
 
 Best,
 {{Your_Name}}
