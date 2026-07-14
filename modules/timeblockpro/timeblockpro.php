@@ -186,32 +186,36 @@ class Agency_Nexus_Module_Timeblockpro extends Agency_Nexus_Base_Module {
 			echo '<div class="updated"><p>Smart suggestion applied to your schedule!</p></div>';
 		}
 
-		$suggestions = [
-			[
-				'title' => 'Morning Deep Work',
-				'desc'  => 'Based on your circadian rhythm, your cognitive load capacity is highest now.',
-				'type'  => 'deep_work',
-				'start' => date('Y-m-d 09:00:00'),
-				'end'   => date('Y-m-d 11:30:00'),
-				'icon'  => '🧠'
-			],
-			[
-				'title' => 'Post-Lunch Administrative Batch',
-				'desc'  => 'Handle emails and shallow tasks during the afternoon energy dip.',
-				'type'  => 'shallow_work',
-				'start' => date('Y-m-d 14:00:00'),
-				'end'   => date('Y-m-d 15:00:00'),
-				'icon'  => '📥'
-			],
-			[
-				'title' => 'Strategic Planning Break',
-				'desc'  => 'Prevent burnout by scheduling a mandatory disconnect period.',
-				'type'  => 'break',
-				'start' => date('Y-m-d 11:30:00'),
-				'end'   => date('Y-m-d 12:00:00'),
-				'icon'  => '☕'
-			]
-		];
+		$suggestions_data = Agency_Nexus_AI_Copilot::generate( 'Generate 3 optimal time block suggestions for the current date', 'time_suggest' );
+		$suggestions = json_decode( $suggestions_data, true );
+		if ( ! is_array( $suggestions ) || empty( $suggestions ) ) {
+			$suggestions = [
+				[
+					'title' => 'Morning Deep Work',
+					'desc'  => 'Based on your circadian rhythm, your cognitive load capacity is highest now.',
+					'type'  => 'deep_work',
+					'start' => date('Y-m-d 09:00:00'),
+					'end'   => date('Y-m-d 11:30:00'),
+					'icon'  => '🧠'
+				],
+				[
+					'title' => 'Post-Lunch Administrative Batch',
+					'desc'  => 'Handle emails and shallow tasks during the afternoon energy dip.',
+					'type'  => 'shallow_work',
+					'start' => date('Y-m-d 14:00:00'),
+					'end'   => date('Y-m-d 15:00:00'),
+					'icon'  => '📥'
+				],
+				[
+					'title' => 'Strategic Planning Break',
+					'desc'  => 'Prevent burnout by scheduling a mandatory disconnect period.',
+					'type'  => 'break',
+					'start' => date('Y-m-d 11:30:00'),
+					'end'   => date('Y-m-d 12:00:00'),
+					'icon'  => '☕'
+				]
+			];
+		}
 		?>
 		<div class="agency-nexus-wrap">
 			<h1><?php _e( 'AI-Powered Time Block Suggestions', 'agency-nexus' ); ?></h1>

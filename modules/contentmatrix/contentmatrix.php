@@ -18,6 +18,7 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 		add_action( 'wp_ajax_an_update_content_date', [ $this, 'handle_update_content_date' ] );
 		add_action( 'wp_ajax_an_create_content', [ $this, 'handle_create_content' ] );
 		add_action( 'wp_ajax_an_delete_content', [ $this, 'handle_delete_content' ] );
+		add_action( 'wp_ajax_an_ai_generate_titles', [ $this, 'handle_ai_generate_titles' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
@@ -121,13 +122,17 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 	public function enqueue_scripts( $hook ) {
 		$pages = [
 			'agency-nexus_page_an-content-calendar',
-			'agency-nexus_page_an-content-list'
+			'agency-nexus_page_an-content-list',
+			'agency-nexus_page_an-batch-automation'
 		];
 
 		if ( ! in_array( $hook, $pages ) ) {
 			return;
 		}
 		wp_enqueue_media();
+		wp_localize_script( 'jquery', 'an_contentmatrix', [
+			'security' => wp_create_nonce( 'an_calendar_nonce' )
+		] );
 	}
 
 	public function register_submenu() {
@@ -362,7 +367,11 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 						<tr>
 							<th><label><?php _e( 'Titles (one per line)', 'agency-nexus' ); ?></label></th>
 							<td>
-								<textarea name="batch_titles" rows="10" class="regular-text" required placeholder="Post Title 1&#10;Post Title 2"></textarea>
+								<textarea name="batch_titles" id="batch_titles" rows="10" class="regular-text" required placeholder="Post Title 1&#10;Post Title 2"></textarea>
+								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+									<br><button type="button" class="button" id="an_ai_generate_titles" style="margin-top: 10px;"><?php _e( '🪄 Generate with AI Copilot', 'agency-nexus' ); ?></button>
+									<span id="an_ai_loading" style="display:none; margin-left:10px; color:#666; font-style:italic;"><?php _e( 'Generating...', 'agency-nexus' ); ?></span>
+								<?php endif; ?>
 							</td>
 						</tr>
 					</table>
@@ -371,6 +380,35 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 					</p>
 				</form>
 			</div>
+			<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+			<script>
+			jQuery(document).ready(function($) {
+				$('#an_ai_generate_titles').on('click', function(e) {
+					e.preventDefault();
+					var projectId = $('select[name="project_id"]').val();
+					if (!projectId) {
+						alert('Please select a project first.');
+						return;
+					}
+					$('#an_ai_generate_titles').prop('disabled', true);
+					$('#an_ai_loading').show();
+					$.post(ajaxurl, {
+						action: 'an_ai_generate_titles',
+						project_id: projectId,
+						security: an_contentmatrix.security
+					}, function(response) {
+						$('#an_ai_generate_titles').prop('disabled', false);
+						$('#an_ai_loading').hide();
+						if (response.success && response.data.titles) {
+							$('#batch_titles').val(response.data.titles);
+						} else {
+							alert('AI generation failed or not fully configured. Falling back to local ideas.');
+						}
+					});
+				});
+			});
+			</script>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -723,5 +761,23 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 			<a href="<?php echo admin_url( 'admin.php?page=an-content-calendar' ); ?>" class="button"><?php _e( 'Open Calendar', 'agency-nexus' ); ?></a>
 		</div>
 		<?php
+	}
+
+	/**
+	 * AJAX handler for generating titles using AI.
+	 */
+	public function handle_ai_generate_titles() {
+		check_ajax_referer( 'an_calendar_nonce', 'security' );
+		if ( ! Agency_Nexus_Permissions::can_access_nexus() ) {
+			wp_send_json_error( 'Unauthorized' );
+		}
+
+		$project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : 0;
+		global $wpdb;
+		$project_title = $wpdb->get_var( $wpdb->prepare( "SELECT title FROM {$wpdb->prefix}an_projects WHERE id = %d", $project_id ) );
+
+		$prompt = "Generate 5 high-converting, viral blog post or social media content titles for an agency project named: " . $project_title;
+		$titles = Agency_Nexus_AI_Copilot::generate( $prompt, 'content_batch' );
+		wp_send_json_success( [ 'titles' => $titles ] );
 	}
 }

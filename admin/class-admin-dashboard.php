@@ -82,6 +82,15 @@ class Agency_Nexus_Admin_Dashboard {
 			update_option( 'an_after_hours_msg', sanitize_textarea_field( $_POST['an_after_hours_msg'] ) );
 			update_option( 'an_hourly_rate', floatval( $_POST['an_hourly_rate'] ) );
 			update_option( 'an_agency_logo', esc_url_raw( $_POST['an_agency_logo'] ) );
+
+			// AI Copilot Settings
+			update_option( 'an_ai_enabled', isset($_POST['an_ai_enabled']) ? 'yes' : 'no' );
+			update_option( 'an_ai_provider', sanitize_text_field( $_POST['an_ai_provider'] ) );
+			update_option( 'an_openai_key', sanitize_text_field( $_POST['an_openai_key'] ) );
+			update_option( 'an_gemini_key', sanitize_text_field( $_POST['an_gemini_key'] ) );
+			update_option( 'an_claude_key', sanitize_text_field( $_POST['an_claude_key'] ) );
+			update_option( 'an_ai_model', sanitize_text_field( $_POST['an_ai_model'] ) );
+
 			wp_redirect( admin_url( 'admin.php?page=an-settings&msg=saved' ) );
 			exit;
 		}
@@ -1349,6 +1358,56 @@ class Agency_Nexus_Admin_Dashboard {
 				</table>
 
 				<hr>
+				<h2><?php _e( 'AI Copilot Engine', 'agency-nexus' ); ?></h2>
+				<p class="description"><?php _e( 'Turn your agency into a supercharged Solo Agency. Connect top AI models to write proposals, draft content in bulk, suggest perfect time blocks, and help you respond to client messages automatically.', 'agency-nexus' ); ?></p>
+				<table class="form-table">
+					<tr>
+						<th><?php _e( 'Enable AI Copilot', 'agency-nexus' ); ?></th>
+						<td>
+							<label>
+								<input type="checkbox" name="an_ai_enabled" value="yes" <?php checked( get_option( 'an_ai_enabled', 'no' ), 'yes' ); ?>>
+								<?php _e( 'Activate AI features across all modules', 'agency-nexus' ); ?>
+							</label>
+						</td>
+					</tr>
+					<tr>
+						<th><label for="an_ai_provider"><?php _e( 'Preferred AI Provider', 'agency-nexus' ); ?></label></th>
+						<td>
+							<select name="an_ai_provider" id="an_ai_provider">
+								<option value="local" <?php selected( get_option( 'an_ai_provider', 'local' ), 'local' ); ?>><?php _e( 'Local CoPilot (Offline/Built-in)', 'agency-nexus' ); ?></option>
+								<option value="openai" <?php selected( get_option( 'an_ai_provider' ), 'openai' ); ?>><?php _e( 'ChatGPT (OpenAI)', 'agency-nexus' ); ?></option>
+								<option value="gemini" <?php selected( get_option( 'an_ai_provider' ), 'gemini' ); ?>><?php _e( 'Google Gemini', 'agency-nexus' ); ?></option>
+								<option value="claude" <?php selected( get_option( 'an_ai_provider' ), 'claude' ); ?>><?php _e( 'Anthropic Claude', 'agency-nexus' ); ?></option>
+							</select>
+						</td>
+					</tr>
+					<tr class="ai-provider-field openai-field" style="display:none;">
+						<th><label for="an_openai_key"><?php _e( 'OpenAI API Key', 'agency-nexus' ); ?></label></th>
+						<td>
+							<input type="password" name="an_openai_key" id="an_openai_key" value="<?php echo esc_attr( get_option( 'an_openai_key' ) ); ?>" class="regular-text">
+						</td>
+					</tr>
+					<tr class="ai-provider-field gemini-field" style="display:none;">
+						<th><label for="an_gemini_key"><?php _e( 'Gemini API Key', 'agency-nexus' ); ?></label></th>
+						<td>
+							<input type="password" name="an_gemini_key" id="an_gemini_key" value="<?php echo esc_attr( get_option( 'an_gemini_key' ) ); ?>" class="regular-text">
+						</td>
+					</tr>
+					<tr class="ai-provider-field claude-field" style="display:none;">
+						<th><label for="an_claude_key"><?php _e( 'Claude API Key', 'agency-nexus' ); ?></label></th>
+						<td>
+							<input type="password" name="an_claude_key" id="an_claude_key" value="<?php echo esc_attr( get_option( 'an_claude_key' ) ); ?>" class="regular-text">
+						</td>
+					</tr>
+					<tr class="ai-provider-field model-field">
+						<th><label for="an_ai_model"><?php _e( 'AI Model', 'agency-nexus' ); ?></label></th>
+						<td>
+							<input type="text" name="an_ai_model" id="an_ai_model" value="<?php echo esc_attr( get_option( 'an_ai_model', 'gpt-4o' ) ); ?>" class="regular-text" placeholder="e.g. gpt-4o, gemini-pro, claude-3-opus">
+						</td>
+					</tr>
+				</table>
+
+				<hr>
 				<h2>Boundary Enforcement (TimeBlock Pro)</h2>
 				<table class="form-table">
 					<tr>
@@ -1484,6 +1543,25 @@ class Agency_Nexus_Admin_Dashboard {
 					$('#logo-preview').html('<img src="' + uploaded_image.url + '" style="max-width: 200px; height: auto; border: 1px solid #ddd; padding: 5px;">');
 				});
 			});
+
+			function toggle_ai_fields() {
+				var val = $('#an_ai_provider').val();
+				$('.ai-provider-field').hide();
+				if (val === 'openai') {
+					$('.openai-field').show();
+					$('.model-field').show();
+				} else if (val === 'gemini') {
+					$('.gemini-field').show();
+					$('.model-field').show();
+				} else if (val === 'claude') {
+					$('.claude-field').show();
+					$('.model-field').show();
+				} else if (val === 'local') {
+					$('.model-field').hide();
+				}
+			}
+			$('#an_ai_provider').change(toggle_ai_fields);
+			toggle_ai_fields();
 		});
 		</script>
 		<?php

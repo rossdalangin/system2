@@ -60,6 +60,11 @@ Agency Nexus is composed of 10 deeply integrated modules:
 *   **Vacation Planner:** Centralized OOO calendar to prevent over-allocation.
 *   **Referral Hub:** Seamlessly delegate overflow work to trusted external partners.
 
+### 11. 🤖 AI Copilot Engine (Autonomous Growth)
+*   **Top AI Provider Support:** Connect ChatGPT (OpenAI), Google Gemini, or Anthropic Claude via settings.
+*   **Premium Local Fallback:** Run completely offline with our built-in context-aware Local CoPilot.
+*   **Omnipresent Intelligence:** Integrated into Batch Automation, Proposals, Scope Builder, Smart Timeblocking, and Messaging to let solo freelancers act as a full-scale agency.
+
 ---
 
 ## 🛠 Advanced Project Management

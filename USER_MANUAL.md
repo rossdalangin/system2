@@ -13,6 +13,7 @@ Before diving into the modules, ensure your core settings are calibrated:
 3.  **Branding:** In **Nexus > Settings**, upload your **Agency Logo**. This logo will automatically appear on all client invoices and proposals (VIP tier).
 4.  **SMTP Configuration:** Under the "Email & SMTP" section in Settings, configure your mail server. This is critical for ensuring automated invoices and daily briefings reach their destination.
 5.  **Demo Mode:** If you want to see how the system looks when fully operational, click **Add Best Sample Content** at the bottom of the Settings page.
+6.  **AI Copilot Configuration:** Go to **Nexus > Settings > AI Copilot Engine** to enable the AI engine. Choose your provider—**Local CoPilot (built-in)**, **ChatGPT (OpenAI)**, **Google Gemini**, or **Anthropic Claude**—and fill in your API credentials. Customize your models to leverage high-performance AI across your entire operation.
 
 ---
 
@@ -156,5 +157,21 @@ A: Extremely. We use AES-256-CBC encryption for sensitive notes and descriptions
 3.  **Media Upload Errors:** If you cannot upload files to the Shared Repository, ensure the `upload_files` capability is granted to your client user role (automatically handled for 'Subscriber' by the plugin).
 4.  **PHP Notice / Undefined Array Key Warnings:** If you encounter `Undefined array key "batch_count"` warnings when submitting batch content, ensure you have updated the plugin to the latest version. The plugin's Batch Automation form handles optional variables safely without triggering undefined-index or key notices.
 5.  **Headers Already Sent Warnings:** If you see `Warning: Cannot modify header information - headers already sent` when submitting any plugin form, ensure that POST requests are handled prior to page rendering. Agency Nexus follows strict WordPress standards, routing form processing on the `admin_init` hook before any HTML outputs are generated. This prevents headers already sent errors during page redirection (e.g., `wp_redirect`).
+
+---
+
+## 🤖 13. AI Copilot Engine
+
+Agency Nexus turns any solo freelancer into a fully capable **Solo Agency** using the built-in **AI Copilot Engine**. By connecting to top industry AI APIs, your operations are supercharged with next-generation intelligence:
+
+*   **ChatGPT (OpenAI), Gemini, and Claude Support:** Enter your API keys in global settings to unlock the provider of your choice.
+*   **Built-in Local CoPilot:** If no keys are provided, the platform uses an intelligent, offline fallback engine that generates fully context-aware schedules, content, and communications—perfect for offline local testing and solo operations with zero cost.
+*   **Cross-Module AI Features:**
+    *   **Time Block Suggestions:** In **TimeBlock Pro > Smart Suggestions**, click **Apply to Calendar** to let the AI build and schedule custom productivity blocks based on high-performance workloads.
+    *   **Batch Automation:** In **ContentMatrix > Batch Automation**, select a project and click **Generate with AI Copilot** to instantly draft 5 optimized, high-converting content titles tailored for that project.
+    *   **Scope Builder & Proposals:** When you generate a proposal from an interactive scope, the AI automatically transforms your basic list of deliverables into a beautiful, persuasive, and highly detailed professional client proposal.
+    *   **AI Chat Assistant:** In **Messaging Hub (ClientSync)**, click **AI Suggest Response** next to your chat box. The AI reads the client's last message and drafts a friendly, professional response for you to review and send instantly.
+
+---
 
 **Need Priority Support?** Contact your Agency VIP account manager directly through the support portal.
