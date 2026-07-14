@@ -18,7 +18,7 @@ Agency Nexus is composed of 10 deeply integrated modules:
 ### 2. 📅 ContentMatrix (Content Planning)
 *   **Pillar Content Architect:** Map out topic clusters and maintain content authority.
 *   **Visual Calendar:** Drag-and-drop scheduling across multiple platforms.
-*   **Batch Automation:** Generate multiple content drafts for a project in seconds.
+*   **Batch Automation:** Generate multiple content drafts for a project in seconds with high reliability and zero header-redirect warnings, in strict compliance with WordPress core standards.
 
 ### 3. ✅ ApprovalFlow (Posting & Sign-off)
 *   **Multi-Stage Drafting:** Move content from Idea -> Draft -> Review -> Approved.
@@ -107,6 +107,10 @@ Agency Nexus is built with a highly modular architecture, making it easy for dev
 ### 🔌 Modular Hooks
 *   `agency_nexus_project_status_updated`: Fired whenever a project status changes. Ideal for custom integrations.
 *   `agency_nexus_dashboard_widgets`: Action hook to add custom widgets to the main Nexus dashboard.
+
+### 🔌 Code Quality & WordPress Standards Compliance
+*   **Early Form Processing:** To eliminate `headers already sent` redirection warnings, form POST data and redirects are handled during the `admin_init` action hook before HTML headers and page rendering begin.
+*   **Safe Variable Notices:** Superglobal arrays (e.g., `$_POST`, `$_GET`) are checked securely with fallback values to avoid PHP `Undefined array key` notices.
 
 ### 🌐 REST API Endpoints
 The plugin exposes several endpoints for external integrations (e.g., mobile apps or custom lead forms):

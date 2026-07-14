@@ -57,7 +57,9 @@ Scale your content engine without the chaos.
     *   *Sample Pillar Map:* **Pillar:** "Agency Operations" -> **Clusters:** "Client Onboarding SOP", "Reducing Tool Fatigue", "Scaling Project Margins".
 *   **Forecasting:** Each content item includes an engagement prediction based on historical performance and platform strength.
 *   **Visual Calendar:** Drag and drop content items to reschedule. Syncs automatically with your team's workload.
-*   **Batch Mode:** Use the Batch Automation tool to generate 10+ draft titles and skeletons for a project in a single click.
+*   **Batch Mode (Batch Automation):** Create high-volume draft structures for a selected project at once. Navigate to **Batch Automation**, select the project, and type or paste your post titles into the textarea—**one title per line**.
+    *   *Parameters:* The system accepts an optional `batch_count` parameter to cap draft creation. If left unconfigured, it defaults to processing all titles provided.
+    *   *Pro-Tip:* All processed titles are initially saved under the `draft` status and assigned to the `wordpress` platform, allowing you to easily review and transition them to active status.
 
 ---
 
@@ -152,5 +154,7 @@ A: Extremely. We use AES-256-CBC encryption for sensitive notes and descriptions
 1.  **Invoices Not Sending:** Ensure your SMTP settings are correct in **Nexus > Settings**. Send a test email to verify connectivity.
 2.  **Shortcode Not Rendering:** Check your license tier in **Nexus > Licensing**. Some shortcodes (like the Marketplace) require a Pro or VIP key.
 3.  **Media Upload Errors:** If you cannot upload files to the Shared Repository, ensure the `upload_files` capability is granted to your client user role (automatically handled for 'Subscriber' by the plugin).
+4.  **PHP Notice / Undefined Array Key Warnings:** If you encounter `Undefined array key "batch_count"` warnings when submitting batch content, ensure you have updated the plugin to the latest version. The plugin's Batch Automation form handles optional variables safely without triggering undefined-index or key notices.
+5.  **Headers Already Sent Warnings:** If you see `Warning: Cannot modify header information - headers already sent` when submitting any plugin form, ensure that POST requests are handled prior to page rendering. Agency Nexus follows strict WordPress standards, routing form processing on the `admin_init` hook before any HTML outputs are generated. This prevents headers already sent errors during page redirection (e.g., `wp_redirect`).
 
 **Need Priority Support?** Contact your Agency VIP account manager directly through the support portal.

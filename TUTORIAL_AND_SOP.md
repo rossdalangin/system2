@@ -55,8 +55,9 @@ This document is the operational backbone of your agency. It contains a "walkthr
 1.  **Task Management:** Check your 'Active Tasks' dashboard upon login. Prioritize 'High' and 'Urgent' items.
 2.  **Time Tracking:** Log your hours *immediately* after completing a task. Notes should be client-facing quality (e.g., 'Developed responsive hero section' instead of 'worked on site').
 3.  **Focus Sprints:** Use **Focus Mode** for tasks requiring deep concentration. Avoid checking DMs during these intervals.
-4.  **Revision Hygiene:** When updating a client draft, always use the 'Edit' view in ContentMatrix to ensure the system captures a new **Version**.
-5.  **Burnout Check:** Log your stress level every Friday in **BurnoutGuard**. If you are at a '10', the Admin will be automatically alerted to adjust your workload.
+4.  **Batch Operations:** When using the **Batch Automation** tool, ensure that each draft title is placed on its own line in the textbox. If using a custom CSV/list, confirm there are no empty lines before submitting to avoid empty drafts.
+5.  **Revision Hygiene:** When updating a client draft, always use the 'Edit' view in ContentMatrix to ensure the system captures a new **Version**.
+6.  **Burnout Check:** Log your stress level every Friday in **BurnoutGuard**. If you are at a '10', the Admin will be automatically alerted to adjust your workload.
 
 ### SOP: Level 3 - Client (Onboarding instructions for your clients)
 **Goal:** Streamlined collaboration and fast approvals.
@@ -65,6 +66,19 @@ This document is the operational backbone of your agency. It contains a "walkthr
 3.  **Sign-off:** Please Approve or Request Changes within 48 hours to prevent project delays.
 4.  **Payments:** All invoices are available in your portal. You can pay via Credit Card or PayPal for instant receipt.
 5.  **Resource Library:** Check your 'Resources' tab for your brand guides, onboarding docs, and signed contracts.
+
+---
+
+## 🛠 PART 2.5: Developer & Operational Troubleshooting SOP
+**Goal:** Keeping the "Agency OS" platform error-free and compliant with WordPress core standards.
+
+### 1. Handling Undefined Variable/Key Warnings
+- Always verify the existence of optional array keys (such as `batch_count` or filter indices) using PHP `isset()` or `empty()` before accessing them in your post-processing logic.
+- Avoid relying on direct index access from superglobals like `$_POST` or `$_GET`.
+
+### 2. Preventing "Headers Already Sent" Warnings during Redirects
+- Under no circumstances should `wp_redirect()` be called during display/render callbacks of menu pages (e.g., inside `render_batch_automation()`), as output starting before headers are sent triggers fatal warnings in production environments.
+- Always intercept POST form actions early in the WordPress lifecycle by hooking into `admin_init` (e.g., inside a module's `handle_post()` method). Process the request, perform database updates, and execute `wp_redirect()` immediately before exiting, keeping presentation and processing strictly separated.
 
 ---
 
