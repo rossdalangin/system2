@@ -19,6 +19,7 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 		add_action( 'wp_ajax_an_create_content', [ $this, 'handle_create_content' ] );
 		add_action( 'wp_ajax_an_delete_content', [ $this, 'handle_delete_content' ] );
 		add_action( 'wp_ajax_an_ai_generate_titles', [ $this, 'handle_ai_generate_titles' ] );
+		add_action( 'wp_ajax_an_ai_generate_gap_draft', [ $this, 'handle_ai_generate_gap_draft' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
@@ -123,7 +124,8 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 		$pages = [
 			'agency-nexus_page_an-content-calendar',
 			'agency-nexus_page_an-content-list',
-			'agency-nexus_page_an-batch-automation'
+			'agency-nexus_page_an-batch-automation',
+			'agency-nexus_page_an-keyword-gap'
 		];
 
 		if ( ! in_array( $hook, $pages ) ) {
@@ -304,7 +306,7 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 										</div>
 									</td>
 									<td>
-										<button class="button button-small" onclick="alert('Creating draft for: <?php echo esc_js($gap->keyword); ?>')">Generate Draft</button>
+										<button class="button button-small an-ai-gap-btn" data-keyword="<?php echo esc_attr($gap->keyword); ?>" data-project-id="<?php echo $gap->project_id; ?>"><?php _e( 'Generate Draft', 'agency-nexus' ); ?></button>
 									</td>
 								</tr>
 							<?php endforeach; if(empty($gaps)) echo '<tr><td colspan="6">No keywords analyzed yet.</td></tr>'; ?>
@@ -312,6 +314,34 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 					</table>
 				</div>
 			</div>
+
+			<script>
+			jQuery(document).ready(function($) {
+				$('.an-ai-gap-btn').on('click', function(e) {
+					e.preventDefault();
+					var $btn = $(this);
+					var keyword = $btn.data('keyword');
+					var projectId = $btn.data('project-id');
+
+					$btn.prop('disabled', true).text('Generating...');
+
+					$.post(ajaxurl, {
+						action: 'an_ai_generate_gap_draft',
+						project_id: projectId,
+						keyword: keyword,
+						security: an_contentmatrix.security
+					}, function(response) {
+						if (response.success) {
+							alert(response.data.msg);
+							$btn.text('Draft Generated!').css('background', '#46b450').css('color', '#fff');
+						} else {
+							alert('Draft generation failed. Ensure your AI Copilot is active.');
+							$btn.prop('disabled', false).text('Generate Draft');
+						}
+					});
+				});
+			});
+			</script>
 
 			<div class="postbox" style="margin-top: 20px; padding: 20px;">
 				<h3><?php _e( 'Competitor Content Tracker', 'agency-nexus' ); ?></h3>
@@ -779,5 +809,38 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 		$prompt = "Generate 5 high-converting, viral blog post or social media content titles for an agency project named: " . $project_title;
 		$titles = Agency_Nexus_AI_Copilot::generate( $prompt, 'content_batch' );
 		wp_send_json_success( [ 'titles' => $titles ] );
+	}
+
+	/**
+	 * AJAX handler for generating Keyword Gap draft using AI.
+	 */
+	public function handle_ai_generate_gap_draft() {
+		check_ajax_referer( 'an_calendar_nonce', 'security' );
+		if ( ! Agency_Nexus_Permissions::can_access_nexus() ) {
+			wp_send_json_error( 'Unauthorized' );
+		}
+
+		$project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : 0;
+		$keyword = isset($_POST['keyword']) ? sanitize_text_field($_POST['keyword']) : '';
+
+		if ( empty($keyword) || ! $project_id ) {
+			wp_send_json_error( 'Missing parameters.' );
+		}
+
+		global $wpdb;
+
+		$prompt = "Write a high-quality, comprehensive blog post content draft targeting the SEO keyword: \"" . $keyword . "\". Include an attention-grabbing headline, subheadings, and a strong call-to-action for an agency project.";
+		$draft_content = Agency_Nexus_AI_Copilot::generate( $prompt, 'keyword_gap_draft' );
+
+		$wpdb->insert( $wpdb->prefix . 'an_content', [
+			'project_id' => $project_id,
+			'title'      => 'AI Draft: ' . ucfirst($keyword),
+			'content'    => $draft_content,
+			'status'     => 'draft',
+			'platform'   => 'wordpress',
+			'created_at' => current_time('mysql')
+		] );
+
+		wp_send_json_success( [ 'msg' => 'Draft successfully generated and saved to Content Management!' ] );
 	}
 }

@@ -114,6 +114,9 @@ Adopting a new operating system takes time. Follow this roadmap to transition yo
 2.  **Bulk Content Sprints:** Use the AI ContentMatrix bulk generator to brainstorm and draft 5 high-converting post ideas for each active project in seconds, eliminating brainstorming friction.
 3.  **Proposal Polish:** When onboarding, use the dynamic scope builder and trigger the AI proposal engine to turn basic deliverables into detailed, high-ticket proposals.
 4.  **Instant Messaging Assistant:** Keep client message response times under 5 minutes by utilizing the chat assistant's **AI Suggest Response** to draft replies.
+5.  **Smart Lead Nurturing:** Review your **Leads** pipeline daily. Let the AI Lead Scoring prioritize high-score (70-100) contacts and automatically read their qualification summaries to understand their needs before calling them.
+6.  **Social Sentiment Monitoring:** Check the **Social Dashboard** every afternoon. The AI-analyzed positive/negative sentiment and priority flags will highlight high-intent leads waiting for immediate brand interaction.
+7.  **Low-Hanging Fruit SEO Exploits:** On the **Keyword Gap** page, review the competitive analysis and click **Generate Draft** for low-difficulty keywords. The AI-written drafts are inserted directly into Content Management for immediate SEO authority.
 
 ---
 *End of Tutorial & SOPs. Standardize your way to 7-figures with AI.*

@@ -171,6 +171,9 @@ Agency Nexus turns any solo freelancer into a fully capable **Solo Agency** usin
     *   **Batch Automation:** In **ContentMatrix > Batch Automation**, select a project and click **Generate with AI Copilot** to instantly draft 5 optimized, high-converting content titles tailored for that project.
     *   **Scope Builder & Proposals:** When you generate a proposal from an interactive scope, the AI automatically transforms your basic list of deliverables into a beautiful, persuasive, and highly detailed professional client proposal.
     *   **AI Chat Assistant:** In **Messaging Hub (ClientSync)**, click **AI Suggest Response** next to your chat box. The AI reads the client's last message and drafts a friendly, professional response for you to review and send instantly.
+    *   **AI Lead Scoring & summaries:** In **EngageTrack > Leads**, incoming and newly saved leads are automatically analyzed and qualified by the AI. It calculates a lead fit score (0-100) and drafts a comprehensive Lead Qualification Summary in the communications history.
+    *   **AI Sentiment Analysis:** In **EngageTrack > Social Dashboard**, incoming comments and interactions are automatically analyzed for positive/negative/neutral sentiment and flagged for priority response based on interest and intent.
+    *   **AI Keyword Gap Drafts:** In **ContentMatrix > Keyword Gap**, click **Generate Draft** next to any identified keyword opportunity. The AI Copilot instantly writes a complete blog post content draft targeting that keyword and inserts it into Content Management.
 
 ---
 

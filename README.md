@@ -64,6 +64,7 @@ Agency Nexus is composed of 10 deeply integrated modules:
 *   **Top AI Provider Support:** Connect ChatGPT (OpenAI), Google Gemini, or Anthropic Claude via settings.
 *   **Premium Local Fallback:** Run completely offline with our built-in context-aware Local CoPilot.
 *   **Omnipresent Intelligence:** Integrated into Batch Automation, Proposals, Scope Builder, Smart Timeblocking, and Messaging to let solo freelancers act as a full-scale agency.
+*   **Next-Gen Automations:** Features real-time AI Lead Scoring & qualification summaries, dynamic social comment Sentiment Analysis, and automatic SEO Content Draft Generation from competitor Keyword Gaps.
 
 ---
 

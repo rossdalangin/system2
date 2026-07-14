@@ -16,6 +16,7 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 		add_action( 'agency_nexus_dashboard_widgets', [ $this, 'render_dashboard_widget' ] );
 		add_action( 'admin_init', [ $this, 'handle_post' ] );
 		add_shortcode( 'agency_nexus_thank_you', [ $this, 'render_thank_you_page' ] );
+		add_action( 'agency_nexus_new_lead_captured', [ $this, 'handle_new_lead_captured' ] );
 	}
 
 	public function handle_post() {
@@ -71,21 +72,13 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 			$status = sanitize_text_field( $_POST['status'] );
 			$value = floatval( $_POST['conversion_value'] );
 
-			// Simple Lead Scoring Algorithm
-			$score = 0;
-			if ( $value > 5000 ) $score += 50;
-			elseif ( $value > 1000 ) $score += 20;
-
-			if ( strpos( strtolower($_POST['source']), 'referral' ) !== false ) $score += 30;
-			if ( $status === 'qualified' ) $score += 20;
-
 			$data = [
 				'name'             => sanitize_text_field( $_POST['name'] ),
 				'email'            => sanitize_email( $_POST['email'] ),
 				'source'           => sanitize_text_field( $_POST['source'] ),
 				'status'           => $status,
 				'conversion_value' => $value,
-				'score'            => $score
+				'score'            => 0
 			];
 			if ( $id ) {
 				$wpdb->update( $table_name, $data, [ 'id' => $id ] );
@@ -106,6 +99,10 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 					return;
 				}
 			}
+
+			// Run AI Lead scoring and qualification
+			self::calculate_and_save_lead_score( $id );
+
 			wp_redirect( admin_url( 'admin.php?page=an-leads&msg=' . $msg ) );
 			exit;
 		}
@@ -781,11 +778,11 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 		$table_name = $wpdb->prefix . 'an_social_interactions';
 		$interactions = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY created_at DESC LIMIT 50" );
 
-		// Seed if empty (Simulated Social Data)
+		// Seed if empty (Simulated Social Data with AI Sentiment Analysis)
 		if ( empty($interactions) ) {
-			$wpdb->insert( $table_name, [ 'platform' => 'Instagram', 'username' => 'johndoe', 'content' => 'Love this new service!', 'sentiment' => 'positive', 'is_priority' => 1, 'created_at' => current_time('mysql') ] );
-			$wpdb->insert( $table_name, [ 'platform' => 'LinkedIn', 'username' => 'sarah_biz', 'content' => 'Can you send me a proposal for web design?', 'sentiment' => 'positive', 'is_priority' => 1, 'created_at' => current_time('mysql') ] );
-			$wpdb->insert( $table_name, [ 'platform' => 'X', 'username' => 'techie99', 'content' => 'Your site is a bit slow today.', 'sentiment' => 'negative', 'is_priority' => 0, 'created_at' => current_time('mysql') ] );
+			self::analyze_and_insert_social_interaction( 'Instagram', 'johndoe', 'Love this new service!' );
+			self::analyze_and_insert_social_interaction( 'LinkedIn', 'sarah_biz', 'Can you send me a proposal for web design?' );
+			self::analyze_and_insert_social_interaction( 'X', 'techie99', 'Your site is a bit slow today.' );
 			$interactions = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY created_at DESC LIMIT 50" );
 		}
 
@@ -1040,5 +1037,125 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Callback for action on API lead capture.
+	 */
+	public function handle_new_lead_captured( $lead_id ) {
+		self::calculate_and_save_lead_score( $lead_id );
+	}
+
+	/**
+	 * Calculate and save the lead score and qualification summary.
+	 */
+	public static function calculate_and_save_lead_score( $lead_id ) {
+		global $wpdb;
+		$lead = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}an_leads WHERE id = %d", $lead_id ) );
+		if ( ! $lead ) {
+			return;
+		}
+
+		$score = 50; // Base score
+		$summary = '';
+
+		if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) {
+			$prompt = "Analyze this agency lead prospect:\n" .
+				"Name: " . $lead->name . "\n" .
+				"Email: " . $lead->email . "\n" .
+				"Source: " . $lead->source . "\n" .
+				"Conversion Value: $" . $lead->conversion_value . "\n\n" .
+				"Calculate a lead fit score from 0 to 100 based on their profile. Award higher scores for professional emails, referral sources, and high conversion value. Output ONLY a JSON object with two fields:\n" .
+				'{"score": 85, "summary": "Highly qualified enterprise lead from website referral."}';
+
+			$ai_result = Agency_Nexus_AI_Copilot::generate( $prompt, 'lead_qualification' );
+			$parsed = json_decode( $ai_result, true );
+			if ( is_array( $parsed ) && isset( $parsed['score'] ) ) {
+				$score = intval( $parsed['score'] );
+				$summary = sanitize_text_field( $parsed['summary'] );
+			} else {
+				if ( preg_match( '/"score":\s*([0-9]{1,3})/', $ai_result, $matches ) ) {
+					$score = intval( $matches[1] );
+				}
+				if ( preg_match( '/"summary":\s*"([^"]+)"/', $ai_result, $matches ) ) {
+					$summary = sanitize_text_field( $matches[1] );
+				} else {
+					$summary = $ai_result;
+				}
+			}
+		} else {
+			$value = floatval( $lead->conversion_value );
+			if ( $value > 5000 ) $score += 30;
+			elseif ( $value > 1000 ) $score += 15;
+			if ( strpos( strtolower( $lead->source ), 'referral' ) !== false ) $score += 15;
+			$summary = __( 'Lead qualified automatically using core rule-based parameters.', 'agency-nexus' );
+		}
+
+		if ( $score > 100 ) $score = 100;
+		if ( $score < 0 ) $score = 0;
+
+		$wpdb->update(
+			$wpdb->prefix . 'an_leads',
+			[ 'score' => $score ],
+			[ 'id' => $lead_id ]
+		);
+
+		// Record the summary inside the lead communications log
+		$wpdb->insert( $wpdb->prefix . 'an_lead_communications', [
+			'lead_id'    => $lead_id,
+			'user_id'    => get_current_user_id() ? get_current_user_id() : 1,
+			'subject'    => __( 'AI Qualification Summary', 'agency-nexus' ),
+			'message'    => $summary,
+			'created_at' => current_time( 'mysql' )
+		] );
+	}
+
+	/**
+	 * Perform real-time AI sentiment analysis on social media interactions.
+	 */
+	public static function analyze_and_insert_social_interaction( $platform, $username, $content ) {
+		global $wpdb;
+		$sentiment = 'neutral';
+		$is_priority = 0;
+
+		if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) {
+			$prompt = "Analyze the sentiment and business priority of this social media comment for our agency:\n" .
+				"Comment: \"" . $content . "\"\n\n" .
+				"Sentiment can be: 'positive', 'negative', or 'neutral'.\n" .
+				"Priority is 1 if they are asking about services/proposals/pricing (high intent), otherwise 0.\n" .
+				"Output ONLY a JSON object with two fields:\n" .
+				'{"sentiment": "positive", "is_priority": 1}';
+
+			$ai_result = Agency_Nexus_AI_Copilot::generate( $prompt, 'social_sentiment' );
+			$parsed = json_decode( $ai_result, true );
+			if ( is_array( $parsed ) ) {
+				$sentiment = isset( $parsed['sentiment'] ) ? sanitize_text_field( $parsed['sentiment'] ) : 'neutral';
+				$is_priority = isset( $parsed['is_priority'] ) ? intval( $parsed['is_priority'] ) : 0;
+			} else {
+				if ( preg_match( '/"sentiment":\s*"([^"]+)"/', $ai_result, $matches ) ) {
+					$sentiment = sanitize_text_field( $matches[1] );
+				}
+				if ( preg_match( '/"is_priority":\s*([0-1])/', $ai_result, $matches ) ) {
+					$is_priority = intval( $matches[1] );
+				}
+			}
+		} else {
+			if ( strpos( strtolower($content), 'proposal' ) !== false || strpos( strtolower($content), 'service' ) !== false || strpos( strtolower($content), 'pricing' ) !== false ) {
+				$sentiment = 'positive';
+				$is_priority = 1;
+			} elseif ( strpos( strtolower($content), 'slow' ) !== false || strpos( strtolower($content), 'error' ) !== false ) {
+				$sentiment = 'negative';
+				$is_priority = 0;
+			}
+		}
+
+		$wpdb->insert( $wpdb->prefix . 'an_social_interactions', [
+			'platform'    => $platform,
+			'username'    => $username,
+			'content'     => $content,
+			'sentiment'   => $sentiment,
+			'is_priority' => $is_priority,
+			'created_at'  => current_time( 'mysql' )
+		] );
 	}
 }
