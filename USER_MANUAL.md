@@ -174,6 +174,11 @@ Agency Nexus turns any solo freelancer into a fully capable **Solo Agency** usin
     *   **AI Lead Scoring & summaries:** In **EngageTrack > Leads**, incoming and newly saved leads are automatically analyzed and qualified by the AI. It calculates a lead fit score (0-100) and drafts a comprehensive Lead Qualification Summary in the communications history.
     *   **AI Sentiment Analysis:** In **EngageTrack > Social Dashboard**, incoming comments and interactions are automatically analyzed for positive/negative/neutral sentiment and flagged for priority response based on interest and intent.
     *   **AI Keyword Gap Drafts:** In **ContentMatrix > Keyword Gap**, click **Generate Draft** next to any identified keyword opportunity. The AI Copilot instantly writes a complete blog post content draft targeting that keyword and inserts it into Content Management.
+    *   **AI Content Improvement & Polish:** Links and buttons are integrated across all editing fields, allowing you to instantly polish, rewrite, and elevate your text via AI:
+        *   **Content List (Edit View):** Use **AI Improve Title** and **AI Improve Content** to turn rough drafts into engaging blog or newsletter copy.
+        *   **Messaging Hub (ClientSync):** Click **AI Suggest Response** or the **Improve** button beside the message field to dynamically elevate your chat replies into polished, client-facing messages.
+        *   **Manage Marketplace:** Polish your products' marketing with **AI Improve Title** and **AI Improve Description** to boost conversion rates on your template shop.
+        *   **Questionnaires (Add/Edit View):** Instantly rewrite questionnaire titles with **AI Improve Title**, or click **AI Improve Questions** to automatically transform simple questions into highly strategic discovery questionnaires.
 
 ---
 

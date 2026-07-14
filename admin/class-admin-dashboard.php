@@ -23,6 +23,7 @@ class Agency_Nexus_Admin_Dashboard {
 		add_action( 'admin_menu', [ $this, 'register_menu' ], 5 );
 		add_action( 'admin_init', [ $this, 'handle_admin_actions' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'wp_ajax_an_ai_improve_content', [ $this, 'handle_ai_improve_content' ] );
 	}
 
 	/**
@@ -2012,5 +2013,22 @@ class Agency_Nexus_Admin_Dashboard {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * AJAX handler for improving content across fields using AI.
+	 */
+	public function handle_ai_improve_content() {
+		if ( ! Agency_Nexus_Permissions::can_access_nexus() ) {
+			wp_send_json_error( 'Unauthorized' );
+		}
+
+		$text = isset($_POST['text']) ? sanitize_textarea_field($_POST['text']) : '';
+		$field_type = isset($_POST['field_type']) ? sanitize_text_field($_POST['field_type']) : 'content';
+
+		$prompt = "Improve and polish the following " . $field_type . " for our agency. Make it highly engaging, professional, persuasive, and clear. Output ONLY the improved version with no explanations, notes, quotes, or markdown wrappers:\n\n" . $text;
+		$improved = Agency_Nexus_AI_Copilot::generate( $prompt, 'improve_' . $field_type );
+
+		wp_send_json_success( [ 'improved' => $improved ] );
 	}
 }
