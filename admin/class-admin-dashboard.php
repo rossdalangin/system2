@@ -555,9 +555,7 @@ class Agency_Nexus_Admin_Dashboard {
 							<th><label for="notes">Internal Notes</label></th>
 							<td>
 								<textarea name="notes" id="notes" rows="5" class="regular-text"><?php echo $client ? esc_textarea( Agency_Nexus::decrypt( $client->notes ) ) : ''; ?></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><a href="#" class="an-ai-improve-link" data-target="#notes" data-type="client_notes" style="text-decoration: none;">✨ <?php _e('AI Improve Notes', 'agency-nexus'); ?></a>
-								<?php endif; ?>
 								<p class="description"><?php _e('Confidential notes about this client (Internal use only).', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -1080,9 +1078,7 @@ class Agency_Nexus_Admin_Dashboard {
 							<th><label for="title">Project Title</label></th>
 							<td>
 								<input type="text" name="title" id="title" value="<?php echo $project ? esc_attr($project->title) : ''; ?>" class="regular-text" required>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-									<a href="#" class="an-ai-improve-link" data-target="#title" data-type="project_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
-								<?php endif; ?>
+								<a href="#" class="an-ai-improve-link" data-target="#title" data-type="project_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
 								<p class="description"><?php _e('Short, descriptive name for the project. e.g., Website Redesign 2024', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -1116,9 +1112,7 @@ class Agency_Nexus_Admin_Dashboard {
 							<th><label for="description">Description</label></th>
 							<td>
 								<textarea name="description" id="description" class="regular-text"><?php echo $project ? esc_textarea( Agency_Nexus::decrypt( $project->description ) ) : ''; ?></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><a href="#" class="an-ai-improve-link" data-target="#description" data-type="project_description" style="text-decoration: none;">✨ <?php _e('AI Improve Description', 'agency-nexus'); ?></a>
-								<?php endif; ?>
 								<p class="description"><?php _e('Detailed overview of goals and deliverables.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -1924,18 +1918,14 @@ class Agency_Nexus_Admin_Dashboard {
 									<th><label for="title"><?php _e( 'Title', 'agency-nexus' ); ?></label></th>
 									<td>
 										<input type="text" name="title" id="title" value="<?php echo esc_attr( $task->title ); ?>" class="regular-text" required>
-										<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-											<a href="#" class="an-ai-improve-link" data-target="#title" data-type="task_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
-										<?php endif; ?>
+										<a href="#" class="an-ai-improve-link" data-target="#title" data-type="task_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
 									</td>
 								</tr>
 								<tr>
 									<th><label for="description"><?php _e( 'Instructions / Description', 'agency-nexus' ); ?></label></th>
 									<td>
 										<textarea name="description" id="description" class="regular-text" rows="5"><?php echo esc_textarea( $task->description ); ?></textarea>
-										<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 											<br><a href="#" class="an-ai-improve-link" data-target="#description" data-type="task_description" style="text-decoration: none;">✨ <?php _e('AI Improve Description', 'agency-nexus'); ?></a>
-										<?php endif; ?>
 									</td>
 								</tr>
 								<tr>
@@ -2056,9 +2046,6 @@ class Agency_Nexus_Admin_Dashboard {
 	 * Append global AI Improve link jQuery click handlers to admin pages.
 	 */
 	public function add_ai_improve_scripts() {
-		if ( get_option( 'an_ai_enabled', 'no' ) !== 'yes' ) {
-			return;
-		}
 		?>
 		<script>
 		jQuery(document).ready(function($) {

@@ -252,9 +252,7 @@ class Agency_Nexus_Module_Moneyflow extends Agency_Nexus_Base_Module {
 							<th><label for="note"><?php _e('Note', 'agency-nexus'); ?></label></th>
 							<td>
 								<textarea name="note" id="note" class="regular-text"><?php echo $expense ? esc_textarea($expense->note) : ''; ?></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><a href="#" class="an-ai-improve-link" data-target="#note" data-type="expense_note" style="text-decoration: none;">✨ <?php _e('AI Improve Note', 'agency-nexus'); ?></a>
-								<?php endif; ?>
 								<p class="description"><?php _e('Internal memo about this purchase.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>

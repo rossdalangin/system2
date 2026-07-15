@@ -130,9 +130,7 @@ class Agency_Nexus_Module_Timeblockpro extends Agency_Nexus_Base_Module {
 							<th><label><?php _e('Title', 'agency-nexus'); ?></label></th>
 							<td>
 								<input type="text" name="title" id="an_timeblock_title" value="<?php echo $block ? esc_attr($block->title) : ''; ?>" required class="regular-text">
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-									<a href="#" class="an-ai-improve-link" data-target="#an_timeblock_title" data-type="timeblock_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
-								<?php endif; ?>
+								<a href="#" class="an-ai-improve-link" data-target="#an_timeblock_title" data-type="timeblock_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
 								<p class="description"><?php _e('What are you working on? e.g., Code Review, Client Call', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -167,7 +165,6 @@ class Agency_Nexus_Module_Timeblockpro extends Agency_Nexus_Base_Module {
 					<a href="?page=an-time-blocking" class="button">Cancel</a>
 				</form>
 			</div>
-			<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 			<script>
 			jQuery(document).ready(function($) {
 				$('.an-ai-improve-link').on('click', function(e) {
@@ -200,7 +197,6 @@ class Agency_Nexus_Module_Timeblockpro extends Agency_Nexus_Base_Module {
 				});
 			});
 			</script>
-			<?php endif; ?>
 			<?php
 			return;
 		}

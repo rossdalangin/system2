@@ -879,9 +879,7 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 							<th><label><?php _e('Shortcut Title', 'agency-nexus'); ?></label></th>
 							<td>
 								<input type="text" name="title" id="an_canned_title" value="<?php echo $resp ? esc_attr($resp->title) : ''; ?>" required class="regular-text">
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-									<a href="#" class="an-ai-improve-link" data-target="#an_canned_title" data-type="canned_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
-								<?php endif; ?>
+								<a href="#" class="an-ai-improve-link" data-target="#an_canned_title" data-type="canned_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
 								<p class="description"><?php _e('A short name to identify this template. e.g., Welcome Message', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -889,9 +887,7 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 							<th><label><?php _e('Content', 'agency-nexus'); ?></label></th>
 							<td>
 								<textarea name="content" id="an_canned_content" required class="regular-text" rows="5"><?php echo $resp ? esc_textarea($resp->content) : ''; ?></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><a href="#" class="an-ai-improve-link" data-target="#an_canned_content" data-type="canned_content" style="text-decoration: none;">✨ <?php _e('AI Improve Content', 'agency-nexus'); ?></a>
-								<?php endif; ?>
 								<p class="description"><?php _e('The full text that will be inserted when you use this shortcut.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -900,7 +896,6 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 					<a href="?page=an-canned-responses" class="button">Cancel</a>
 				</form>
 			</div>
-			<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 			<script>
 			jQuery(document).ready(function($) {
 				$('.an-ai-improve-link').on('click', function(e) {
@@ -933,7 +928,6 @@ class Agency_Nexus_Module_Engagetrack extends Agency_Nexus_Base_Module {
 				});
 			});
 			</script>
-			<?php endif; ?>
 			<?php
 			return;
 		}

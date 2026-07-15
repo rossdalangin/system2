@@ -277,9 +277,7 @@ class Agency_Nexus_Module_Burnoutguard extends Agency_Nexus_Base_Module {
 							<th><label><?php _e('Notes', 'agency-nexus'); ?></label></th>
 							<td>
 								<textarea name="note" id="an_burnout_note" class="regular-text" rows="3"><?php echo $log ? esc_textarea($log->note) : ''; ?></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><a href="#" class="an-ai-improve-link" data-target="#an_burnout_note" data-type="burnout_notes" style="text-decoration: none;">✨ <?php _e('AI Improve Notes', 'agency-nexus'); ?></a>
-								<?php endif; ?>
 								<p class="description"><?php _e('Describe any factors affecting your well-being or workload.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -288,7 +286,6 @@ class Agency_Nexus_Module_Burnoutguard extends Agency_Nexus_Base_Module {
 					<a href="?page=an-health-check" class="button">Cancel</a>
 				</form>
 			</div>
-			<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 			<script>
 			jQuery(document).ready(function($) {
 				$('.an-ai-improve-link').on('click', function(e) {
@@ -321,7 +318,6 @@ class Agency_Nexus_Module_Burnoutguard extends Agency_Nexus_Base_Module {
 				});
 			});
 			</script>
-			<?php endif; ?>
 			<?php
 			return;
 		}

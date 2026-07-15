@@ -250,9 +250,7 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 							<th>Title</th>
 							<td>
 								<input type="text" name="title" id="an_product_title" value="<?php echo $item ? esc_attr($item->title) : ''; ?>" required class="regular-text">
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-									<a href="#" class="an-ai-improve-link" data-target="#an_product_title" data-type="product_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
-								<?php endif; ?>
+								<a href="#" class="an-ai-improve-link" data-target="#an_product_title" data-type="product_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
 							</td>
 						</tr>
 						<tr><th>Type</th><td>
@@ -269,9 +267,7 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 							<th>Description</th>
 							<td>
 								<textarea name="content" id="an_product_desc" class="regular-text" rows="5"><?php echo $item ? esc_textarea($item->content) : ''; ?></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><a href="#" class="an-ai-improve-link" data-target="#an_product_desc" data-type="product_description" style="text-decoration: none;">✨ <?php _e('AI Improve Description', 'agency-nexus'); ?></a>
-								<?php endif; ?>
 							</td>
 						</tr>
 						<tr><th>Product Image URL</th><td>
@@ -385,9 +381,7 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 							<th><label><?php _e('Title', 'agency-nexus'); ?></label></th>
 							<td>
 								<input type="text" name="title" id="an_q_title" value="<?php echo $q ? esc_attr($q->title) : ''; ?>" class="regular-text" required>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-									<a href="#" class="an-ai-improve-link" data-target="#an_q_title" data-type="questionnaire_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
-								<?php endif; ?>
+								<a href="#" class="an-ai-improve-link" data-target="#an_q_title" data-type="questionnaire_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
 							</td>
 						</tr>
 						<tr>
@@ -397,14 +391,11 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 									<div style="margin-bottom:10px;"><input type="text" name="questions[]" value="<?php echo esc_attr($question); ?>" class="large-text an-q-input"></div>
 								<?php endforeach; ?>
 								<button type="button" class="button" onclick="jQuery('#questions-list').append('<div style=\'margin-bottom:10px;\'><input type=\'text\' name=\'questions[]\' class=\'large-text an-q-input\'></div>')">+ Add Question</button>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-									<button type="button" class="button" id="an-ai-improve-questions" style="margin-left:10px;">✨ <?php _e('AI Improve Questions', 'agency-nexus'); ?></button>
-								<?php endif; ?>
+								<button type="button" class="button" id="an-ai-improve-questions" style="margin-left:10px;">✨ <?php _e('AI Improve Questions', 'agency-nexus'); ?></button>
 							</td>
 						</tr>
 					</table>
 
-					<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 					<script>
 					jQuery(document).ready(function($) {
 						$('.an-ai-improve-link').on('click', function(e) {
@@ -476,7 +467,6 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 						});
 					});
 					</script>
-					<?php endif; ?>
 					<input type="submit" name="an_save_questionnaire" class="button button-primary" value="Save Questionnaire">
 					<a href="?page=an-questionnaires" class="button">Cancel</a>
 				</form>
@@ -547,9 +537,7 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 							<th><label for="title"><?php _e('Title', 'agency-nexus'); ?></label></th>
 							<td>
 								<input type="text" name="title" id="an_resource_title" value="<?php echo $resource ? esc_attr($resource->title) : ''; ?>" class="regular-text" required>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-									<a href="#" class="an-ai-improve-link" data-target="#an_resource_title" data-type="resource_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
-								<?php endif; ?>
+								<a href="#" class="an-ai-improve-link" data-target="#an_resource_title" data-type="resource_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
 								<p class="description"><?php _e('Descriptive name of the resource. e.g., Standard Service Agreement', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -576,9 +564,7 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 							<th><label for="content"><?php _e('Text Content / Description', 'agency-nexus'); ?></label></th>
 							<td>
 								<textarea name="content" id="an_resource_content" class="regular-text"><?php echo $resource ? esc_textarea($resource->content) : ''; ?></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><a href="#" class="an-ai-improve-link" data-target="#an_resource_content" data-type="resource_content" style="text-decoration: none;">✨ <?php _e('AI Improve Content', 'agency-nexus'); ?></a>
-								<?php endif; ?>
 								<p class="description"><?php _e('The text body of the template or a brief overview of how to use this resource.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>

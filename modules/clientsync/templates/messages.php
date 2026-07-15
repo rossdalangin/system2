@@ -55,10 +55,8 @@
 							<option value="<?php echo esc_attr($resp->content); ?>"><?php echo esc_html($resp->title); ?></option>
 						<?php endforeach; ?>
 					</select>
-					<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-						<button type="button" class="button" id="an_ai_suggest_msg" style="margin-bottom: 0;"><?php _e( '✨ AI Suggest Response', 'agency-nexus' ); ?></button>
+					<button type="button" class="button" id="an_ai_suggest_msg" style="margin-bottom: 0;"><?php _e( '✨ AI Suggest Response', 'agency-nexus' ); ?></button>
 						<span id="an_ai_msg_loading" style="display:none; color:#666; font-style:italic; margin-left:10px;"><?php _e( 'Thinking...', 'agency-nexus' ); ?></span>
-					<?php endif; ?>
 				</div>
 				<?php endif; ?>
 				<form id="an-message-form">

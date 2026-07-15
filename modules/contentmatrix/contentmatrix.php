@@ -398,10 +398,8 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 							<th><label><?php _e( 'Titles (one per line)', 'agency-nexus' ); ?></label></th>
 							<td>
 								<textarea name="batch_titles" id="batch_titles" rows="10" class="regular-text" required placeholder="Post Title 1&#10;Post Title 2"></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><button type="button" class="button" id="an_ai_generate_titles" style="margin-top: 10px;"><?php _e( '🪄 Generate with AI Copilot', 'agency-nexus' ); ?></button>
 									<span id="an_ai_loading" style="display:none; margin-left:10px; color:#666; font-style:italic;"><?php _e( 'Generating...', 'agency-nexus' ); ?></span>
-								<?php endif; ?>
 							</td>
 						</tr>
 					</table>
@@ -410,7 +408,6 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 					</p>
 				</form>
 			</div>
-			<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 			<script>
 			jQuery(document).ready(function($) {
 				$('#an_ai_generate_titles').on('click', function(e) {
@@ -438,7 +435,6 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 				});
 			});
 			</script>
-			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -572,9 +568,7 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 							<th><label><?php _e('Title', 'agency-nexus'); ?></label></th>
 							<td>
 								<input type="text" name="title" id="an_content_title" value="<?php echo $content ? esc_attr($content->title) : ''; ?>" required class="regular-text">
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
-									<a href="#" class="an-ai-improve-link" data-target="#an_content_title" data-type="title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
-								<?php endif; ?>
+								<a href="#" class="an-ai-improve-link" data-target="#an_content_title" data-type="title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
 								<p class="description"><?php _e('Internal name or headline for the content.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -582,9 +576,7 @@ class Agency_Nexus_Module_Contentmatrix extends Agency_Nexus_Base_Module {
 							<th><label><?php _e('Body Content', 'agency-nexus'); ?></label></th>
 							<td>
 								<textarea name="content" id="an_content_body" class="regular-text" rows="10"><?php echo $content ? esc_textarea($content->content) : ''; ?></textarea>
-								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
 									<br><a href="#" class="an-ai-improve-link" data-target="#an_content_body" data-type="content" style="text-decoration: none;">✨ <?php _e('AI Improve Content', 'agency-nexus'); ?></a>
-								<?php endif; ?>
 								<p class="description"><?php _e('The actual text or copy for the post.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
