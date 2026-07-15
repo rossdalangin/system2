@@ -24,6 +24,7 @@ class Agency_Nexus_Admin_Dashboard {
 		add_action( 'admin_init', [ $this, 'handle_admin_actions' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		add_action( 'wp_ajax_an_ai_improve_content', [ $this, 'handle_ai_improve_content' ] );
+		add_action( 'admin_footer', [ $this, 'add_ai_improve_scripts' ] );
 	}
 
 	/**
@@ -554,6 +555,9 @@ class Agency_Nexus_Admin_Dashboard {
 							<th><label for="notes">Internal Notes</label></th>
 							<td>
 								<textarea name="notes" id="notes" rows="5" class="regular-text"><?php echo $client ? esc_textarea( Agency_Nexus::decrypt( $client->notes ) ) : ''; ?></textarea>
+								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+									<br><a href="#" class="an-ai-improve-link" data-target="#notes" data-type="client_notes" style="text-decoration: none;">✨ <?php _e('AI Improve Notes', 'agency-nexus'); ?></a>
+								<?php endif; ?>
 								<p class="description"><?php _e('Confidential notes about this client (Internal use only).', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -1076,6 +1080,9 @@ class Agency_Nexus_Admin_Dashboard {
 							<th><label for="title">Project Title</label></th>
 							<td>
 								<input type="text" name="title" id="title" value="<?php echo $project ? esc_attr($project->title) : ''; ?>" class="regular-text" required>
+								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+									<a href="#" class="an-ai-improve-link" data-target="#title" data-type="project_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
+								<?php endif; ?>
 								<p class="description"><?php _e('Short, descriptive name for the project. e.g., Website Redesign 2024', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -1109,6 +1116,9 @@ class Agency_Nexus_Admin_Dashboard {
 							<th><label for="description">Description</label></th>
 							<td>
 								<textarea name="description" id="description" class="regular-text"><?php echo $project ? esc_textarea( Agency_Nexus::decrypt( $project->description ) ) : ''; ?></textarea>
+								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+									<br><a href="#" class="an-ai-improve-link" data-target="#description" data-type="project_description" style="text-decoration: none;">✨ <?php _e('AI Improve Description', 'agency-nexus'); ?></a>
+								<?php endif; ?>
 								<p class="description"><?php _e('Detailed overview of goals and deliverables.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -1912,11 +1922,21 @@ class Agency_Nexus_Admin_Dashboard {
 							<table class="form-table">
 								<tr>
 									<th><label for="title"><?php _e( 'Title', 'agency-nexus' ); ?></label></th>
-									<td><input type="text" name="title" id="title" value="<?php echo esc_attr( $task->title ); ?>" class="regular-text" required></td>
+									<td>
+										<input type="text" name="title" id="title" value="<?php echo esc_attr( $task->title ); ?>" class="regular-text" required>
+										<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+											<a href="#" class="an-ai-improve-link" data-target="#title" data-type="task_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
+										<?php endif; ?>
+									</td>
 								</tr>
 								<tr>
 									<th><label for="description"><?php _e( 'Instructions / Description', 'agency-nexus' ); ?></label></th>
-									<td><textarea name="description" id="description" class="regular-text" rows="5"><?php echo esc_textarea( $task->description ); ?></textarea></td>
+									<td>
+										<textarea name="description" id="description" class="regular-text" rows="5"><?php echo esc_textarea( $task->description ); ?></textarea>
+										<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+											<br><a href="#" class="an-ai-improve-link" data-target="#description" data-type="task_description" style="text-decoration: none;">✨ <?php _e('AI Improve Description', 'agency-nexus'); ?></a>
+										<?php endif; ?>
+									</td>
 								</tr>
 								<tr>
 									<th><label for="assigned_to"><?php _e( 'Assigned To', 'agency-nexus' ); ?></label></th>
@@ -2030,5 +2050,48 @@ class Agency_Nexus_Admin_Dashboard {
 		$improved = Agency_Nexus_AI_Copilot::generate( $prompt, 'improve_' . $field_type );
 
 		wp_send_json_success( [ 'improved' => $improved ] );
+	}
+
+	/**
+	 * Append global AI Improve link jQuery click handlers to admin pages.
+	 */
+	public function add_ai_improve_scripts() {
+		if ( get_option( 'an_ai_enabled', 'no' ) !== 'yes' ) {
+			return;
+		}
+		?>
+		<script>
+		jQuery(document).ready(function($) {
+			$(document).on('click', '.an-ai-improve-link', function(e) {
+				e.preventDefault();
+				var $link = $(this);
+				var targetSel = $link.data('target');
+				var fieldType = $link.data('type');
+				var currentText = $(targetSel).val();
+
+				if (!currentText || !currentText.trim()) {
+					alert('Please enter some text first to let AI improve it.');
+					return;
+				}
+
+				var originalText = $link.html();
+				$link.text('<?php _e("Improving...", "agency-nexus"); ?>').css('pointer-events', 'none');
+
+				$.post(ajaxurl, {
+					action: 'an_ai_improve_content',
+					text: currentText,
+					field_type: fieldType
+				}, function(response) {
+					$link.html(originalText).css('pointer-events', 'auto');
+					if (response.success && response.data.improved) {
+						$(targetSel).val(response.data.improved);
+					} else {
+						alert('AI improvement failed. Ensure your AI Copilot is fully configured.');
+					}
+				});
+			});
+		});
+		</script>
+		<?php
 	}
 }

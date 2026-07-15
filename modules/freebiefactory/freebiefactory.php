@@ -546,7 +546,10 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 						<tr>
 							<th><label for="title"><?php _e('Title', 'agency-nexus'); ?></label></th>
 							<td>
-								<input type="text" name="title" id="title" value="<?php echo $resource ? esc_attr($resource->title) : ''; ?>" class="regular-text" required>
+								<input type="text" name="title" id="an_resource_title" value="<?php echo $resource ? esc_attr($resource->title) : ''; ?>" class="regular-text" required>
+								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+									<a href="#" class="an-ai-improve-link" data-target="#an_resource_title" data-type="resource_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
+								<?php endif; ?>
 								<p class="description"><?php _e('Descriptive name of the resource. e.g., Standard Service Agreement', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -572,7 +575,10 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 						<tr>
 							<th><label for="content"><?php _e('Text Content / Description', 'agency-nexus'); ?></label></th>
 							<td>
-								<textarea name="content" id="content" class="regular-text"><?php echo $resource ? esc_textarea($resource->content) : ''; ?></textarea>
+								<textarea name="content" id="an_resource_content" class="regular-text"><?php echo $resource ? esc_textarea($resource->content) : ''; ?></textarea>
+								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+									<br><a href="#" class="an-ai-improve-link" data-target="#an_resource_content" data-type="resource_content" style="text-decoration: none;">✨ <?php _e('AI Improve Content', 'agency-nexus'); ?></a>
+								<?php endif; ?>
 								<p class="description"><?php _e('The text body of the template or a brief overview of how to use this resource.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -590,6 +596,35 @@ class Agency_Nexus_Module_Freebiefactory extends Agency_Nexus_Base_Module {
 					var frame = wp.media({ title: 'Upload Resource', multiple: false }).open().on('select', function(e){
 						var attachment = frame.state().get('selection').first().toJSON();
 						$('#file_url').val(attachment.url);
+					});
+				});
+
+				$('.an-ai-improve-link').on('click', function(e) {
+					e.preventDefault();
+					var $link = $(this);
+					var targetSel = $link.data('target');
+					var fieldType = $link.data('type');
+					var currentText = $(targetSel).val();
+
+					if (!currentText.trim()) {
+						alert('Please enter some text first to let AI improve it.');
+						return;
+					}
+
+					var originalText = $link.html();
+					$link.text('<?php _e("Improving...", "agency-nexus"); ?>').css('pointer-events', 'none');
+
+					$.post(ajaxurl, {
+						action: 'an_ai_improve_content',
+						text: currentText,
+						field_type: fieldType
+					}, function(response) {
+						$link.html(originalText).css('pointer-events', 'auto');
+						if (response.success && response.data.improved) {
+							$(targetSel).val(response.data.improved);
+						} else {
+							alert('AI improvement failed. Ensure your AI Copilot is fully configured.');
+						}
 					});
 				});
 			});

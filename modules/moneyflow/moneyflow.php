@@ -252,6 +252,9 @@ class Agency_Nexus_Module_Moneyflow extends Agency_Nexus_Base_Module {
 							<th><label for="note"><?php _e('Note', 'agency-nexus'); ?></label></th>
 							<td>
 								<textarea name="note" id="note" class="regular-text"><?php echo $expense ? esc_textarea($expense->note) : ''; ?></textarea>
+								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+									<br><a href="#" class="an-ai-improve-link" data-target="#note" data-type="expense_note" style="text-decoration: none;">✨ <?php _e('AI Improve Note', 'agency-nexus'); ?></a>
+								<?php endif; ?>
 								<p class="description"><?php _e('Internal memo about this purchase.', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -269,6 +272,35 @@ class Agency_Nexus_Module_Moneyflow extends Agency_Nexus_Base_Module {
 					var frame = wp.media({ title: 'Upload Receipt', multiple: false }).open().on('select', function(e){
 						var uploaded_image = frame.state().get('selection').first().toJSON();
 						$('#receipt_url').val(uploaded_image.url);
+					});
+				});
+
+				$('.an-ai-improve-link').on('click', function(e) {
+					e.preventDefault();
+					var $link = $(this);
+					var targetSel = $link.data('target');
+					var fieldType = $link.data('type');
+					var currentText = $(targetSel).val();
+
+					if (!currentText.trim()) {
+						alert('Please enter some text first to let AI improve it.');
+						return;
+					}
+
+					var originalText = $link.html();
+					$link.text('<?php _e("Improving...", "agency-nexus"); ?>').css('pointer-events', 'none');
+
+					$.post(ajaxurl, {
+						action: 'an_ai_improve_content',
+						text: currentText,
+						field_type: fieldType
+					}, function(response) {
+						$link.html(originalText).css('pointer-events', 'auto');
+						if (response.success && response.data.improved) {
+							$(targetSel).val(response.data.improved);
+						} else {
+							alert('AI improvement failed. Ensure your AI Copilot is fully configured.');
+						}
 					});
 				});
 			});

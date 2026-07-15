@@ -129,7 +129,10 @@ class Agency_Nexus_Module_Timeblockpro extends Agency_Nexus_Base_Module {
 						<tr>
 							<th><label><?php _e('Title', 'agency-nexus'); ?></label></th>
 							<td>
-								<input type="text" name="title" value="<?php echo $block ? esc_attr($block->title) : ''; ?>" required class="regular-text">
+								<input type="text" name="title" id="an_timeblock_title" value="<?php echo $block ? esc_attr($block->title) : ''; ?>" required class="regular-text">
+								<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+									<a href="#" class="an-ai-improve-link" data-target="#an_timeblock_title" data-type="timeblock_title" style="margin-left: 10px; text-decoration: none;">✨ <?php _e('AI Improve Title', 'agency-nexus'); ?></a>
+								<?php endif; ?>
 								<p class="description"><?php _e('What are you working on? e.g., Code Review, Client Call', 'agency-nexus'); ?></p>
 							</td>
 						</tr>
@@ -164,6 +167,40 @@ class Agency_Nexus_Module_Timeblockpro extends Agency_Nexus_Base_Module {
 					<a href="?page=an-time-blocking" class="button">Cancel</a>
 				</form>
 			</div>
+			<?php if ( get_option( 'an_ai_enabled', 'no' ) === 'yes' ) : ?>
+			<script>
+			jQuery(document).ready(function($) {
+				$('.an-ai-improve-link').on('click', function(e) {
+					e.preventDefault();
+					var $link = $(this);
+					var targetSel = $link.data('target');
+					var fieldType = $link.data('type');
+					var currentText = $(targetSel).val();
+
+					if (!currentText.trim()) {
+						alert('Please enter some text first to let AI improve it.');
+						return;
+					}
+
+					var originalText = $link.html();
+					$link.text('<?php _e("Improving...", "agency-nexus"); ?>').css('pointer-events', 'none');
+
+					$.post(ajaxurl, {
+						action: 'an_ai_improve_content',
+						text: currentText,
+						field_type: fieldType
+					}, function(response) {
+						$link.html(originalText).css('pointer-events', 'auto');
+						if (response.success && response.data.improved) {
+							$(targetSel).val(response.data.improved);
+						} else {
+							alert('AI improvement failed. Ensure your AI Copilot is fully configured.');
+						}
+					});
+				});
+			});
+			</script>
+			<?php endif; ?>
 			<?php
 			return;
 		}
