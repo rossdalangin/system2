@@ -1925,7 +1925,9 @@ class Agency_Nexus_Admin_Dashboard {
 									<th><label for="description"><?php _e( 'Instructions / Description', 'agency-nexus' ); ?></label></th>
 									<td>
 										<textarea name="description" id="description" class="regular-text" rows="5"><?php echo esc_textarea( $task->description ); ?></textarea>
-											<br><a href="#" class="an-ai-improve-link" data-target="#description" data-type="task_description" style="text-decoration: none;">✨ <?php _e('AI Improve Description', 'agency-nexus'); ?></a>
+											<br><a href="#" class="an-ai-improve-link" data-target="#description" data-type="task_description" style="text-decoration: none;">✨ <?php _e('AI Improve Description', 'agency-nexus'); ?></a> |
+											<a href="#" id="an-ai-generate-brief" style="text-decoration: none;">🪄 <?php _e('AI Generate SOP Brief', 'agency-nexus'); ?></a>
+											<span id="an-ai-brief-loading" style="display:none; color:#666; font-style:italic; margin-left:10px;"><?php _e( 'Writing SOP...', 'agency-nexus' ); ?></span>
 									</td>
 								</tr>
 								<tr>
@@ -2074,6 +2076,33 @@ class Agency_Nexus_Admin_Dashboard {
 						$(targetSel).val(response.data.improved);
 					} else {
 						alert('AI improvement failed. Ensure your AI Copilot is fully configured.');
+					}
+				});
+			});
+
+			$(document).on('click', '#an-ai-generate-brief', function(e) {
+				e.preventDefault();
+				var taskTitle = $('#title').val();
+				if (!taskTitle || !taskTitle.trim()) {
+					alert('Please enter a task Title first to let AI write the SOP Brief.');
+					return;
+				}
+
+				var $link = $(this);
+				$link.css('pointer-events', 'none');
+				$('#an-ai-brief-loading').show();
+
+				$.post(ajaxurl, {
+					action: 'an_ai_improve_content',
+					text: taskTitle,
+					field_type: 'task_sop_brief'
+				}, function(response) {
+					$link.css('pointer-events', 'auto');
+					$('#an-ai-brief-loading').hide();
+					if (response.success && response.data.improved) {
+						$('#description').val(response.data.improved);
+					} else {
+						alert('SOP generation failed. Ensure your AI Copilot is fully configured.');
 					}
 				});
 			});

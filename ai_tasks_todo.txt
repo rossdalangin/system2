@@ -1,0 +1,6 @@
+AI OPERATIONAL & AUTONOMOUS IMPROVEMENTS TODO LIST
+
+1. [COMPLETED] TASK 1: Add a "Generate Task Brief" button to the Edit Task view in `admin/class-admin-dashboard.php` to let the AI Copilot dynamically write comprehensive, step-by-step SOP instructions/briefs for team members.
+2. [COMPLETED] TASK 2: Implement robust error-handling, JSON parsing safeguards, and detailed logging inside `includes/class-ai-copilot.php` to handle API timeouts and network errors gracefully.
+3. [COMPLETED] TASK 3: Add an AI-powered payment reminder/follow-up email template draft generator beside invoices in `modules/moneyflow/moneyflow.php` to help solo freelancers write highly persuasive collection emails.
+4. [COMPLETED] TASK 4: Run a full php syntax check (`php -l`) and verify all modified files are completely syntax-error-free.

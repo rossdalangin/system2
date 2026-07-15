@@ -19,6 +19,7 @@ class Agency_Nexus_Module_Moneyflow extends Agency_Nexus_Base_Module {
 		add_action( 'template_redirect', [ $this, 'handle_client_payment' ] );
 		add_action( 'wp_ajax_an_marketplace_purchase', [ $this, 'handle_marketplace_purchase' ] );
 		add_action( 'wp_ajax_nopriv_an_marketplace_purchase', [ $this, 'handle_marketplace_purchase' ] );
+		add_action( 'wp_ajax_an_ai_invoice_reminder', [ $this, 'handle_ai_invoice_reminder' ] );
 	}
 
 	public function handle_post() {
@@ -692,6 +693,32 @@ class Agency_Nexus_Module_Moneyflow extends Agency_Nexus_Base_Module {
 			</div>
 			<hr class="wp-header-end">
 
+			<script>
+			jQuery(document).ready(function($) {
+				$('.an-ai-reminder-link').on('click', function(e) {
+					e.preventDefault();
+					var $link = $(this);
+					var invNum = $link.data('invoice-number');
+
+					var originalText = $link.html();
+					$link.text('<?php _e("Drafting...", "agency-nexus"); ?>').css('pointer-events', 'none');
+
+					$.post(ajaxurl, {
+						action: 'an_ai_invoice_reminder',
+						invoice_number: invNum,
+						security: '<?php echo wp_create_nonce("an_save_invoice_nonce"); ?>'
+					}, function(response) {
+						$link.html(originalText).css('pointer-events', 'auto');
+						if (response.success && response.data.draft) {
+							alert("AI-Drafted Collection Email:\n\n" + response.data.draft);
+						} else {
+							alert('Failed to draft reminder. Ensure your AI Copilot is fully configured.');
+						}
+					});
+				});
+			});
+			</script>
+
 			<table class="wp-list-table widefat fixed striped">
 				<thead><tr><th>Number</th><th>Project</th><th>Client</th><th>Amount</th><th>Status</th><th>Due</th><th>Actions</th></tr></thead>
 				<tbody>
@@ -709,6 +736,9 @@ class Agency_Nexus_Module_Moneyflow extends Agency_Nexus_Base_Module {
 								<a href="?page=an-invoices&action=print&id=<?php echo $inv->id; ?>">Print</a> |
 								<a href="?page=an-invoices&action=edit&id=<?php echo $inv->id; ?>">Edit</a> |
 								<a href="<?php echo wp_nonce_url('?page=an-invoices&action=delete&id=' . $inv->id, 'an_delete_invoice_' . $inv->id); ?>" style="color:red;">Delete</a>
+								<?php if ( $inv->status !== 'paid' ) : ?>
+									| <a href="#" class="an-ai-reminder-link" data-invoice-number="<?php echo esc_attr( $inv->number ); ?>" style="color:var(--an-indigo-600); font-weight:bold;"><?php _e( 'AI Email', 'agency-nexus' ); ?></a>
+								<?php endif; ?>
 								<br>
 								<form method="post" style="display:inline-block; margin-top:5px;">
 									<?php wp_nonce_field('an_add_payment_nonce'); ?>
@@ -906,5 +936,28 @@ class Agency_Nexus_Module_Moneyflow extends Agency_Nexus_Base_Module {
 			<p><a href="<?php echo admin_url('admin.php?page=an-projects'); ?>"><?php _e( 'Manage Projects', 'agency-nexus' ); ?></a></p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * AJAX handler for drafting invoice payment reminder using AI.
+	 */
+	public function handle_ai_invoice_reminder() {
+		if ( ! Agency_Nexus_Permissions::can_access_nexus() ) {
+			wp_send_json_error( 'Unauthorized' );
+		}
+
+		$invoice_number = isset($_POST['invoice_number']) ? sanitize_text_field($_POST['invoice_number']) : '';
+		if ( empty($invoice_number) ) {
+			wp_send_json_error( 'Missing parameters.' );
+		}
+
+		global $wpdb;
+		$invoice = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}an_invoices WHERE number = %s", $invoice_number ) );
+		$client_name = $invoice ? $wpdb->get_var( $wpdb->prepare( "SELECT name FROM {$wpdb->prefix}an_clients WHERE id = %d", $invoice->client_id ) ) : 'Client';
+
+		$prompt = "Write a professional, friendly payment collection reminder email for invoice number \"" . $invoice_number . "\". The client's name is \"" . $client_name . "\". The email should be polite yet firm and clear.";
+		$draft = Agency_Nexus_AI_Copilot::generate( $prompt, 'payment_reminder' );
+
+		wp_send_json_success( [ 'draft' => $draft ] );
 	}
 }
